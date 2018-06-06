@@ -1,0 +1,58 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <code>双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，你需要使用 v-html 指令：</code>
+ 
+    <p>{{msg}} -> 改变了</p>
+    
+    <p>Using mustaches: {{ rawHtml }}</p>
+    <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+    
+    <h3>这个 span 的内容将会被替换成为属性值 rawHtml，直接作为 HTML——会忽略解析属性值中的数据绑定。注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位。
+            你的站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 XSS 攻击。请只对可信内容使用 HTML 插值，绝不要对用户提供的内容使用插值。</h3>
+
+    <h1>
+        Mustache 语法不能作用在 HTML 特性上，遇到这种情况应该使用 v-bind 指令：
+    </h1>
+    <button v-html="disabledHtml"></button>
+
+    <button v-bind:disabled="disabled">被禁用了</button>
+
+    <h1>使用 JavaScript 表达式</h1>
+    <p>迄今为止，在我们的模板中，我们一直都只绑定简单的属性键值。但实际上，对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。</p>
+    <p>age is: {{age}}</p>
+    <p>age+1 is: {{age+1}}</p>
+    <h3>这些表达式会在所属 Vue 实例的数据作用域下作为 JavaScript 被解析。有个限制就是，每个绑定都只能包含单个表达式，所以下面的例子都不会生效。</h3>
+    <!-- 这是语句，不是表达式 -->
+    <!-- <p>{{ var a = 1 }}</p> -->
+
+    <!-- 流控制也不会生效，请使用三元表达式 -->
+    <!-- <p>{{ if (disabled) { return msg } }}</p> -->
+
+    <!-- 完整语法 -->
+    <input type="button" v-on:click="sayHi" value="Say Hi" />
+    <!-- 缩写 -->
+    <input type="button" @click="sayHi" value="Say Ho">
+
+    <a v-bind:href="baiduLink">Go BaiDu</a>
+    <a :href="baiduLink">Go BaiDu 2</a>
+</div>
+<script>
+    var app = new Vue({
+        el:'#app',
+        data:{
+            msg:'The page loading from date of '+new Date().toLocaleString(),
+            rawHtml:'<span style="color: red;">这是html</span>',
+            disabledHtml:'disabled="disabled"',
+            disabled:true,
+            age:9,
+            baiduLink:'https://www.baidu.com/'
+        },
+        methods:{
+            sayHi:function(){
+                alert('Hi ....西瓜');
+            }
+        }
+    });
+    app.msg = 'new msg';
+</script>
