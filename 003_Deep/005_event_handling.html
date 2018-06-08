@@ -1,0 +1,55 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>事件处理</h1>
+    <p>可以用 v-on 指令监听 DOM 事件，并在触发时运行一些 JavaScript 代码。</p>
+    <input type="button" @click="counter++" value="累积计数器" />
+    <p>The button above has been clicked <span>{{counter}}</span>  times.</p>
+
+    <h5>事件处理方法</h5>
+    <p>然而许多事件处理逻辑会更为复杂，所以直接把 JavaScript 代码写在 v-on 指令中是不可行的。因此 v-on 还可以接收一个需要调用的方法名称。</p>
+    <input type="button" @click="addCounter" value="累积计数器 方法" />
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>   
+    
+    Vue.component('my-component',{
+        template:'<p class="foo bar">Hi</p>'
+    });
+    
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',
+            counter:0,
+        },
+        methods:{
+            addCounter:function(){
+                this.counter++;
+            }
+        },
+        computed:{
+            classObjCpt:function(){
+                return{
+                    active: this.isActive,
+                    'text-danger':this.hasError
+                };
+            }
+        }
+    });
+
+   
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>

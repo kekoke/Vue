@@ -1,0 +1,118 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>条件渲染</h1>
+    <h4>V-If</h4>
+    <p>在字符串模板中，比如 Handlebars，我们得像这样写一个条件块：</p>
+    <!-- Handlebars 模板 -->
+   
+        <!-- {{#if of}}
+            <p>Yes</p>
+        {{/if}} -->
+    <p>在 Vue 中，我们使用 v-if 指令实现同样的功能：</p>
+    <p v-if="ok">Yes Ok</p>
+    <p v-else>No ok</p>
+
+    <h4>在元素上使用 v-if 条件渲染分组</h4>
+    <template v-if="ok">
+        <h5>Title</h5>
+        <p>段落 1</p>
+        <p>段落 2</p>
+    </template>
+
+    <h5>v-else 你可以使用 v-else 指令来表示 v-if 的“else 块”：</h5>
+    <div v-if="ok">
+        Ok, now you see.
+    </div>
+    <div v-else>
+        No, you don't see.
+    </div>
+    <p>v-else 元素必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别。</p>
+
+    <h5>v-else-if 【2.1.0 新增】</h5>
+    <p>v-else-if，顾名思义，充当 v-if 的“else-if 块”，可以连续使用：</p>
+    <p v-if="type==='A'">This is A</p>
+    <p v-else-if="type==='B'">This is B</p>
+    <p v-else>Other</p>
+
+    <h5>用key 管理可复用的元素</h5>
+    <p>Vue 会尽可能高效地渲染元素，通常会复用已有元素而不是从头开始渲染。这么做除了使 Vue 变得非常快之外，还有其它一些好处。例如，如果你允许用户在不同的登录方式之间切换：</p>
+    <template v-if="loginType==='name'">
+        <label>Username</label>
+        <input placeholder="Enter your username">
+    </template>
+    <template v-else>
+        <label>Email Address</label>
+        <input placeholder="Enter your email address">
+    </template>
+    <input type="button" v-on:click="toggleLoginType"  value="Toggle Login Type" />
+
+    <p>
+        <template v-if="loginType==='name'">
+            <label>Username</label>
+            <input placeholder="Enter your username" key="name-input">
+        </template>
+        <template v-else>
+            <label>Email Address</label>
+            <input placeholder="Enter your email address" key="email-input">
+        </template>
+        <input type="button" v-on:click="toggleLoginType"  value="Toggle Login Type" />
+    </p>
+
+    <h5>v-show</h5>
+    <p>另一个用于根据条件展示元素的选项是 v-show 指令。用法大致一样：</p>
+    <p v-show="ok">Show P.....</p>
+    <p>不同的是带有 v-show 的元素始终会被渲染并保留在 DOM 中。v-show 只是简单地切换元素的 CSS 属性 display。
+        <code>注意，v-show 不支持 <template> 元素，也不支持 v-else。</code>
+    </p>
+
+    <p>v-if vs v-show</p>
+    <p>v-if 是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。 v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。相比之下，v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。</p>
+
+    <p>当 v-if 与 v-for 一起使用时，v-for 具有比 v-if 更高的优先级。</p>
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>       
+    
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',
+            ok:true,
+            type:"A",
+            loginType:'name'
+        },
+        methods:{
+            toggleLoginType:function(){
+                if(this.loginType==='name'){
+                    this.loginType='email';
+                }else{
+                    this.loginType='name';
+                }
+            }
+        },
+        computed:{
+            classObjCpt:function(){
+                return{
+                    active: this.isActive,
+                    'text-danger':this.hasError
+                };
+            }
+        }
+    });
+
+   
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>

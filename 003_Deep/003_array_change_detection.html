@@ -1,0 +1,200 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>数组更新检测</h1>   
+    <h5>变异方法</h5>
+    <p>Vue 包含一组观察数组的变异方法，所以它们也将会触发视图更新。这些方法如下：</p>
+    <div>
+        <ol>
+            <li v-for="(item, index) in mts" :key="index">
+                {{item}}
+            </li>
+        </ol>
+    </div>
+
+    <h5>替换数组</h5>
+    <p>变异方法 (mutation method)，顾名思义，会改变被这些方法调用的原始数组。相比之下，也有非变异 (non-mutating method) 方法，例如：filter(), concat() 和 slice() 。这些不会改变原始数组，但总是返回一个新数组。当使用非变异方法时，可以用新数组替换旧数组：</p>
+    <input type="button" v-on:click="filterFoods" value="过滤菜单">
+    <p>菜单如下：</p>
+    <div>
+        <ol>
+            <li v-for="(item, index) in foods" :key="item.id">{{item.name}} - {{item.id}}</li>
+        </ol>
+    </div>
+    <p>你可能认为这将导致 Vue 丢弃现有 DOM 并重新渲染整个列表。幸运的是，事实并非如此。Vue 为了使得 DOM 元素得到最大范围的重用而实现了一些智能的、启发式的方法，所以用一个含有相同元素的数组去替换原来的数组是非常高效的操作。</p>
+
+    <h5>注意事项</h5>
+    <p>由于 JavaScript 的限制，Vue 不能检测以下变动的数组：</p>
+    <p>1. 当你利用索引直接设置一个项时，例如：vm.items[indexOfItem] = newValue</p>
+    <p>2. 当你修改数组的长度时，例如：vm.items.length = newLength</p>
+    <h5>为了解决第一类问题，以下两种方式都可以实现和 vm.items[indexOfItem] = newValue 相同的效果，同时也将触发状态更新：</h5>    
+    <code>Vue.set(vm.items, indexOfItem, newValue)</code> 
+    <input type="button" v-on:click="updateFoods" value="更新菜单">
+
+    <p>为了解决第二类问题，你可以使用 splice：</p>
+    <code>vm.items.splice(newLength)</code>
+
+    <h5>对象更改检测注意事项</h5>
+    <p>还是由于 JavaScript 的限制，Vue 不能检测对象属性的添加或删除：</p>
+
+    <!-- var vm = new Vue({
+        data: {
+          a: 1
+        }
+      })
+      // `vm.a` 现在是响应式的
+      
+      vm.b = 2
+      // `vm.b` 不是响应式的 -->
+
+    <p>对于已经创建的实例，Vue 不能动态添加根级别的响应式属性。但是，可以使用 </p>
+    <p>Vue.set(object, key, value) 方法向嵌套对象添加响应式属性。例如，对于：</p>
+    <div>
+        <p>User</p>
+        <ol>
+            <li v-for="(val,key) in user">{{key}}:{{val}}</li>
+        </ol>
+        <!-- 添加一个新的 age 属性到嵌套的 user 对象： -->
+        <input type="button" value="Update User" v-on:click="updateUser">
+    </div>
+
+    <p>有时你可能需要为已有对象赋予多个新属性，比如使用 Object.assign() 或 _.extend()。在这种情况下，你应该用两个对象的属性创建一个新的对象。所以，如果你想添加新的响应式属性，不要像这样：</p>
+    <!-- Object.assign(vm.userProfile, {
+        age: 27,
+        favoriteColor: 'Vue Green'
+      }) -->
+    <p>你应该这样做：</p>
+    <!-- vm.userProfile = Object.assign({}, vm.userProfile, {
+        age: 27,
+        favoriteColor: 'Vue Green'
+      }) -->
+    
+    <h5>显示过滤/排序结果</h5>
+    <p>有时，我们想要显示一个数组的过滤或排序副本，而不实际改变或重置原始数据。在这种情况下，可以创建返回过滤或排序数组的计算属性。</p>
+    <!-- <li v-for="n in evenNumbers">{{ n }}</li> -->
+    <!-- data: {
+        numbers: [ 1, 2, 3, 4, 5 ]
+      },
+      computed: {
+        evenNumbers: function () {
+          return this.numbers.filter(function (number) {
+            return number % 2 === 0
+          })
+        }
+      } -->
+      <!-- 在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个 method 方法： -->
+      <!-- <li v-for="n in even(numbers)">{{ n }}</li> -->
+      <!-- data: {
+        numbers: [ 1, 2, 3, 4, 5 ]
+      },
+      methods: {
+        even: function (numbers) {
+          return numbers.filter(function (number) {
+            return number % 2 === 0
+          })
+        }
+      } -->
+      <h5>一段取值范围的 v-for</h5>
+      <div>
+          <span v-for="item in 10">{{item}} </span>
+      </div>
+
+      <h5>v-for on a template</h5>
+      <div>
+          <ul>
+              <template v-for="(item, index) in foods" >
+                  <li>{{item.name}} - {{item.id}}</li>
+              </template>
+          </ul>
+      </div>
+
+    <h5>v-for with v-if</h5>
+    <p>当它们处于同一节点，v-for 的优先级比 v-if 更高，这意味着 v-if 将分别重复运行于每个 v-for 循环中。当你想为仅有的一些项渲染节点时，这种优先级的机制会十分有用，如下：</p>
+    <div>
+        <ul>
+            <li v-for="(item, index) in foods" :key="item.id" v-if="item.name.indexOf('瓜')>0">{{item.name}} - {{item.id}}</li>
+        </ul>
+    </div>
+
+    <h5>一个组件的 v-for</h5>
+    <p>在自定义组件里，你可以像任何普通元素一样用 v-for 。</p>
+    <div>
+        <ul>
+            <my-component v-for="(item, index) in foods" :key="index" :food="item" :idx="index"></my-component>
+        </ul>
+    </div>
+    <p>不自动将 item 注入到组件里的原因是，这会使得组件与 v-for 的运作紧密耦合。明确组件数据的来源能够使组件在其他场合重复使用。</p>
+
+    
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>   
+    
+    Vue.component('my-component',{
+        props:['food','idx'],
+        template:'<li>{{food.name}} - {{idx}} </li>'
+    });
+    
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',
+            parentMsg:'猜猜我是谁...',
+            menus:['首页','关于','联系我们'],
+            foods:[{id:1,name:'西蓝花炒洋葱'},{id:2,name:'黄焖西红柿'},{id:3,name:'清蒸韭菜'},{id:4,name:'木瓜'},{id:5,name:'西瓜'}],
+            studentA:{
+                firstName:'Jos',
+                lastName:'Kopl',
+                fullName:'Jos Kopl',
+                age:12
+            },
+            mts:['push()','pop()','shift()','unshift()','splice()','sort()','reverse()'],
+            user:{name:'Ati'}
+        },
+        methods:{
+            filterFoods:function(){
+                this.foods =  this.foods.filter(function(item){
+                    return item.name.indexOf('瓜')>=0;
+                });
+            },
+            updateFoods:function(){
+                this.$set(this.foods,4,{id:5,name:'西瓜瓜瓜'});
+                //Vue.set(this.foods,4,{id:5,name:'西瓜瓜瓜'});
+            },
+            updateUser:function(){
+                //添加一个新的 age 属性到嵌套的 user 对象：
+                this.$set(this.user,'age',29);
+
+                this.user = Object.assign({},this.user,{
+                    sex:'不男不女',
+                    email:'haha@vip.com'
+                })
+            }
+        },
+        computed:{
+            classObjCpt:function(){
+                return{
+                    active: this.isActive,
+                    'text-danger':this.hasError
+                };
+            }
+        }
+    });
+    //由于 JavaScript 的限制，Vue 不能检测以下变动的数组：
+    app.foods[4] = '西瓜瓜';   
+
+    app.newName = '我是新name';//不是响应式的
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>

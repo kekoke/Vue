@@ -1,0 +1,63 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>菜单</h1>   
+    <div>
+        <input type="text" v-model="newFood" placeholder="请输入菜名..." />
+        <input type="button" v-on:click="orderDishes" value="点菜" />
+        <div>
+            <ol>
+                <my-component v-for="(item, index) in foods" :key="item.id" :food="item" :idx="index" v-on:remove="removeDishes"></my-compenent>
+            </ol>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>   
+    
+    Vue.component('my-component',{
+        props:['food','idx'],
+        template:'<li>{{food.name}} - {{idx}} <input type="button" v-on:click="$emit(\'remove\',idx)" value="移除" /> </li>'
+    });
+   
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',    
+            foods:[{id:1,name:'西蓝花炒洋葱'},{id:2,name:'黄焖西红柿'},{id:3,name:'清蒸韭菜'},{id:4,name:'木瓜'},{id:5,name:'西瓜'}],  
+            newFood:''          
+        },
+        methods:{
+            filterFoods:function(){
+                this.foods =  this.foods.filter(function(item){
+                    return item.name.indexOf('瓜')>=0;
+                });
+            },
+            orderDishes:function(){
+                var id = this.foods.length+1;
+                this.foods.push({id:id,name:this.newFood});
+            },
+            removeDishes:function(idx){
+                this.foods.splice(idx,1);
+                //this.$emit('removeDishes');
+            }
+        },
+        computed:{
+             
+        }
+    });
+ 
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>

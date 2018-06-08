@@ -1,0 +1,111 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>列表渲染</h1>   
+    <div>
+        <ol>
+            <li v-for="menu in menus">
+                {{menu}}
+            </li>
+        </ol>
+    </div>
+
+    <p>在 v-for 块中，我们拥有对父作用域属性的完全访问权限。v-for 还支持一个可选的第二个参数为当前项的索引。</p>
+    <div>
+        <h5>好吃的：</h5>
+        <ol>
+            <li v-for="(food,index) in foods">
+               {{parentMsg}} - {{food.name}} - {{index}} - {{foods[index].id}}
+            </li>
+        </ol>
+    </div>
+
+    <h5>你也可以用 of 替代 in 作为分隔符，因为它是最接近 JavaScript 迭代器的语法：</h5>
+    <div>
+        <h5>好吃的：</h5>
+        <ol>
+            <li v-for="(food,index) of foods">
+                {{parentMsg}} - {{food.name}} - {{index}} - {{foods[index].id}}
+            </li>
+        </ol>
+    </div>
+    
+    <h5>一个对象的 v-for</h5>
+    <div>
+        <ol>
+            <li v-for="val in studentA">
+                {{val}}
+            </li>
+        </ol>
+    </div>
+
+    <div>
+        <ol>
+            <li v-for="(val,key,index) in studentA">
+                {{key}}:{{val}} - {{index}}
+            </li>
+        </ol>
+    </div>
+    <h5>在遍历对象时，是按 Object.keys() 的结果遍历，但是不能保证它的结果在不同的 JavaScript 引擎下是一致的。</h5>
+
+    <h4>key</h4>
+    <p>当 Vue.js 用 v-for 正在更新已渲染过的元素列表时，它默认用“就地复用”策略。如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配数据项的顺序， 而是简单复用此处每个元素，并且确保它在特定索引下显示已被渲染过的每个元素。这个类似 Vue 1.x 的 track-by="$index" 。</p>
+    <p>这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时 DOM 状态 (例如：表单输入值) 的列表渲染输出。</p>
+    <p>为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key 属性。理想的 key 值是每项都有的且唯一的 id。这个特殊的属性相当于 Vue 1.x 的 track-by ，但它的工作方式类似于一个属性，所以你需要用 v-bind 来绑定动态值 (在这里使用简写)：</p>
+    <div>
+        <h5>好吃的：</h5>
+        <ol>
+            <li v-for="(food,index) of foods" :key="food.id">
+                {{food.name}} - {{index}} - {{foods[index].id}}
+            </li>
+        </ol>
+    </div>
+    <p>建议尽可能在使用 v-for 时提供 key，除非遍历输出的 DOM 内容非常简单，或者是刻意依赖默认行为以获取性能上的提升。</p>
+    <p>因为它是 Vue 识别节点的一个通用机制，key 并不与 v-for 特别关联，key 还具有其他用途，我们将在后面的指南中看到其他用途。</p>
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>   
+    
+    Vue.component('my-component',{
+        template:'<p class="foo bar">Hi</p>'
+    });
+    
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',
+            parentMsg:'猜猜我是谁...',
+            menus:['首页','关于','联系我们'],
+            foods:[{id:1,name:'西蓝花炒洋葱'},{id:2,name:'黄焖西红柿'},{id:3,name:'清蒸韭菜'}],
+            studentA:{
+                firstName:'Jos',
+                lastName:'Kopl',
+                fullName:'Jos Kopl',
+                age:12
+            }
+        },
+        computed:{
+            classObjCpt:function(){
+                return{
+                    active: this.isActive,
+                    'text-danger':this.hasError
+                };
+            }
+        }
+    });
+
+   
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>
