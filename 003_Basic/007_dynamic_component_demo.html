@@ -1,0 +1,86 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>组件基础</h1>
+    <h5>动态组件</h5>
+    <p>有的时候，在不同组件之间进行动态切换是非常有用的，比如在一个多标签的界面里：</p>
+    <P>上述内容可以通过 Vue 的 <component> 元素加一个特殊的 is 特性来实现：</P>
+    <!-- 组件会在 `currentTabComponent` 改变时改变 -->
+    <div>
+        <p>在上述示例中，currentTabComponent 可以包括</p>
+        <ul>
+            <li>已注册组件的名字，或</li>
+            <li>一个组件的选项对象</li>            
+        </ul>
+        <p>你可以在这里查阅并体验完整的代码，或在这个版本了解绑定组件选项对象，而不是已注册组件名的示例。</p>
+        <p>到目前为止，关于动态组件你需要了解的大概就这些了，如果你阅读完本页内容并掌握了它的内容，我们会推荐你再回来把<span class="text-danger">动态和异步组件</span>读完。</p>
+    </div>
+    <button v-for="tab in tabs" v-bind:key="tab" v-bind:class="['tab-button',{active:currentTab===tab}]" v-on:click="currentTab = tab">{{tab}}</button>
+    <component :is="currentTabComponent" class="tab"></component>
+
+
+    <div style="height: 300px;"></div>
+</div>
+<style type="text/css">
+    .tab-button {
+    padding: 6px 10px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #f0f0f0;
+    margin-bottom: -1px;
+    margin-right: -1px;
+    }
+    .tab-button:hover {
+    background: #e0e0e0;
+    }
+    .tab-button.active {
+    background: #e0e0e0;
+    }
+    .tab {
+    border: 1px solid #ccc;
+    padding: 10px;
+    }
+</style>
+<script>   
+    Vue.component('tab-home', { 
+        template: '<div>Home component</div>' 
+    })
+    Vue.component('tab-posts', { 
+        template: '<div>Posts component</div>' 
+    })
+    Vue.component('tab-archive', { 
+        template: '<div>Archive component</div>' 
+    })
+    
+    var app = new Vue({
+        el:'#app',
+        data:{    
+            currentTab:'Home',
+            tabs:['Home','Posts','Archive'],
+            food:'',
+            foods:[{value:1,text:"西瓜",desc:"<p>描述西瓜</p>"},{value:2,text:"南瓜",desc:"<p>描述南瓜</p>"},{value:1,text:"東瓜",desc:"<p>描述東瓜</p>"}]
+        },
+        methods:{
+            enlargeText:function(enlargeAmount){
+                if(enlargeAmount){
+                    this.postFontSize= this.postFontSize + enlargeAmount;
+                }else{
+                   this.postFontSize++;
+                }
+            }
+        },
+        computed:{
+            currentTabComponent:function(){
+                return 'tab-' + this.currentTab.toLowerCase();
+            }
+        }
+    });   
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>

@@ -1,0 +1,147 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>表单输入绑定</h1>
+    <h5>基础用法</h5>
+    <p>你可以用 v-model 指令在表单   input 及 textarea 元素上创建双向数据绑定。它会根据控件类型自动选取正确的方法来更新元素。尽管有些神奇，但 v-model 本质上不过是语法糖。它负责监听用户的输入事件以更新数据，并对一些极端场景进行一些特殊处理。</p>
+    <p>v-model 会忽略所有表单元素的 value、checked、selected 特性的初始值而总是将 Vue 实例的数据作为数据来源。你应该通过 JavaScript 在组件的 data 选项中声明初始值。</p>
+    <p>对于需要使用输入法 (如中文、日文、韩文等) 的语言，你会发现 v-model 不会在输入法组合文字过程中得到更新。如果你也想处理这个过程，请使用 input 事件。</p>
+
+    <h5>文本</h5>
+    <input v-model="name" placeholder="edit me" />
+    <p>Your name is:{{name}}</p>
+
+    <span>Multiline name is:</span>
+    <p style="white-space: pre-line;">{{ name }}</p>
+    <br>
+    <textarea v-model="name" placeholder="add multiple lines"></textarea>
+
+    <h5>复选框</h5>
+    <input type="checkbox" value="box 1" v-model="selected">
+    <input type="checkbox" value="box 2" v-model="selected">
+    <input type="checkbox" value="box 3" id="box3" v-model="selected"><label for="box3">{{selected}}</label>
+    
+    <p>多个复选框，绑定到同一个数组：</p>
+    <input type="checkbox" id="xlh" value="西蓝花" v-model="checkedNames"><label for="xlh">西蓝花</label>
+    <input type="checkbox" id="xhs" value="西红柿" v-model="checkedNames"><label for="xhs">西红柿</label>
+    <input type="checkbox" id="xh" value="西湖"  v-model="checkedNames"><label for="xh">西湖</label>
+    <p><label>Checked names: {{checkedNames}}</label></p>
+
+    <h5>单选按钮</h5>
+    <div>
+        <input type="radio" id="one" value="One" v-model="picked">
+        <label for="one">One</label>
+        <br>
+        <input type="radio" id="two" value="Two" v-model="picked">
+        <label for="two">Two</label>
+        <br>
+        <span>Picked: {{ picked }}</span>
+    </div>
+
+    <h5>选择框</h5>
+    <div>
+        <p>爱好</p>
+        <select v-model="hobby">
+            <option v-for="(item, index) in hobbys" :key="index">
+                {{item}}
+            </option>
+        </select>
+        <p>Your hobby is: {{hobby}}</p>
+    </div>
+
+    <div>
+        <p>食物</p>
+        <select v-model="food">
+            <option v-for="(item, index) in foods" :key="index" v-bind:value="item.value">
+                {{item.text}}
+            </option>
+        </select>
+        <p>selected food is: {{food}}</p>
+    </div>
+
+    <h5>值绑定</h5>
+    <p>对于单选按钮，复选框及选择框的选项，v-model 绑定的值通常是静态字符串 (对于复选框也可以是布尔值)：</p>
+    <!-- 当选中时，`picked` 为字符串 "a" -->
+    <p><input type="radio" v-model="picked" value="a"><label>{{picked}}</label></p>
+    <p><input type="checkbox" v-model="selected"><label>{{selected}}</label></p>
+    <p><select v-model="food">
+        <option value="abs">abs</option>
+    </select>
+    <label>{{food}}</label>
+    </p>
+
+    <h5>复选框</h5>
+    <p><input type="checkbox" v-model="picked" true-value="yes" false-value="no"><label>{{picked}}</label></p>
+    <p>这里的 true-value 和 false-value 特性并不会影响输入控件的 value 特性，因为浏览器在提交表单时并不会包含未被选中的复选框。如果要确保表单中这两个值中的一个能够被提交，(比如“yes”或“no”)，请换用单选按钮。</p>
+    
+    <h5>单选按钮</h5>
+    <input type="radio" v-model="picked" name="r2" v-bind:value="food" >
+    <!-- // 当选中时
+    vm.pick === vm.food -->
+    
+    <h5>选择框的选项</h5>
+    <p><select v-model="food">
+        <option v-bind:value="{num:123}">123</option>
+    </select>
+    <label>{{food.num}}</label>
+    </p>
+
+    <h3>修饰符</h3>
+    <h5>.lazy</h5>
+    <p>在默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步 (除了上述输入法组合文字时)。你可以添加 lazy 修饰符，从而转变为使用 change 事件进行同步：</p>
+    <!-- 在“change”时而非“input”时更新 -->
+    <input type="text" v-model.lazy="food"> <label>{{food}}</label>
+    <h5>.number</h5>
+    <p>如果想自动将用户的输入值转为数值类型，可以给 v-model 添加 number 修饰符：</p>
+    <p><input type="number" v-model.number="age"></p>
+
+    <h5>.trim</h5>
+    <p>如果要自动过滤用户输入的首尾空白字符，可以给 v-model 添加 trim 修饰符：</p>
+    <input v-model.trim="name">
+    
+
+    <div style="height: 300px;"></div>
+</div>
+<style type="text/css">
+    .active{
+        text-decoration: underline;
+    }
+    .text-danger{
+        color: red;
+    }
+</style>
+<script>   
+    
+    Vue.component('my-component',{
+        template:'<p class="foo bar">Hi</p>'
+    });
+    
+    var app = new Vue({
+        el:'#app',
+        data:{
+            name:'',
+            age:'',
+            selected:true,
+            checkedNames: [],
+            picked:'',
+            hobby:'',
+            hobbys:['足球','篮球','羽毛球'],
+            food:'',
+            foods:[{value:1,text:"西瓜"},{value:2,text:"南瓜"},{value:1,text:"東瓜"}]
+        },
+        computed:{
+            classObjCpt:function(){
+                return{
+                    active: this.isActive,
+                    'text-danger':this.hasError
+                };
+            }
+        }
+    });   
+
+    // $watch 是一个实例方法
+    app.$watch('name',function(newVal,oldVal){
+         // 这个回调将在 `app.name` 改变后调用
+        this.show = true;
+    })
+</script>
